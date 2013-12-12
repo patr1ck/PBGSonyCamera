@@ -159,10 +159,14 @@
     
     AFHTTPRequestOperation *op = [manager HTTPRequestOperationWithRequest:request
                                                                   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+#ifdef PBGSONYCAMERA_LOGGING
                                                                       NSLog(@"Success: %@", responseObject);
+#endif
                                                                       self.recModeStarted = YES;
                                                                   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+#ifdef PBGSONYCAMERA_LOGGING
                                                                       NSLog(@"Error: %@", error);
+#endif
                                                                   }];
     [manager.operationQueue addOperation:op];
 }
@@ -177,7 +181,9 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     AFHTTPRequestOperation *op = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
+#ifdef PBGSONYCAMERA_LOGGING
         NSLog(@"Success: %@", responseObject);
+#endif
         self.livefeedURL = [[responseObject objectForKey:@"result"] firstObject];
         NSURLRequest *livefeedRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:self.livefeedURL]];
         self.photoData = [NSMutableData dataWithCapacity:1000];
@@ -185,7 +191,9 @@
         self.liveViewCallback = liveViewCallback;
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+#ifdef PBGSONYCAMERA_LOGGING
         NSLog(@"Error: %@", error);
+#endif
     }];
     
     [manager.operationQueue addOperation:op];
@@ -207,14 +215,17 @@
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     AFHTTPRequestOperation *op = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        NSLog(@"Success: %@", responseObject);
         NSArray *imageURLs = [[responseObject objectForKey:@"result"] firstObject];
-        NSLog(@"Image url: %@", [imageURLs firstObject]);
+#ifdef PBGSONYCAMERA_LOGGING
+        NSLog(@"Success: %@", responseObject);
+        NSLog(@"Image URL: %@", [imageURLs firstObject]);
+#endif
         [self saveImageAtURL:[imageURLs firstObject]];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+#ifdef PBGSONYCAMERA_LOGGING
         NSLog(@"Error: %@", error);
+#endif
     }];
     
     [manager.operationQueue addOperation:op];
@@ -241,9 +252,13 @@
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     AFHTTPRequestOperation *op = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Success for setPostview: %@", responseObject);
+#ifdef PBGSONYCAMERA_LOGGING
+        NSLog(@"Success: %@", responseObject);
+#endif
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+#ifdef PBGSONYCAMERA_LOGGING
         NSLog(@"Error: %@", error);
+#endif
     }];
     
     [manager.operationQueue addOperation:op];
@@ -326,13 +341,17 @@
     [postOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, UIImage *responseObject) {
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            NSLog(@"Saving image: %@", responseObject);
+#ifdef PBGSONYCAMERA_LOGGING
+            NSLog(@"Success: %@", responseObject);
+#endif
             if (self.delegate && [self.delegate respondsToSelector:@selector(imageTaken:)]) {
                 [self.delegate imageTaken:responseObject];
             }
         });
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Image error: %@", error);
+#ifdef PBGSONYCAMERA_LOGGING
+        NSLog(@"Error: %@", error);
+#endif    
     }];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
